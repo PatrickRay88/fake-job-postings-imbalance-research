@@ -6,6 +6,7 @@ Exploratory data analysis and classic machine learning model comparison for an i
 
 - `job_postings_eda_model_comparison.ipynb`: local notebook with saved outputs.
 - `job_postings_eda_model_comparison_colab.ipynb`: Colab-friendly notebook.
+- `project_framing.md`: research questions, hypotheses, methodology, and final project angle.
 - `Data/fake_jobs_cleaned.csv`: cleaned and feature-engineered dataset.
 - `Data/fake_job_postings.csv`: original dataset.
 - `results/`: generated charts and summary CSVs from the local run.
@@ -38,3 +39,5 @@ jupyter notebook job_postings_eda_model_comparison.ipynb
 ## Project Angle
 
 The dataset is highly imbalanced, with fake postings making up about 4.84% of the rows. The project focuses on why accuracy is misleading for this task and compares classic machine learning models using imbalance-aware metrics such as average precision, ROC AUC, fake-class recall, and fake-class F1.
+
+The extended notebook also includes weighted vs unweighted model comparisons, precision-recall curves, feature interpretation, and error analysis.
