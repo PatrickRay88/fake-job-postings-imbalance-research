@@ -7,6 +7,7 @@ Exploratory data analysis and classic machine learning model comparison for an i
 - `job_postings_eda_model_comparison.ipynb`: local notebook with saved outputs.
 - `job_postings_eda_model_comparison_colab.ipynb`: Colab-friendly notebook.
 - `project_framing.md`: research questions, hypotheses, methodology, and final project angle.
+- `results_analysis.md`: written summary of the project results with key tables and plots.
 - `Data/fake_jobs_cleaned.csv`: cleaned and feature-engineered dataset.
 - `Data/fake_job_postings.csv`: original dataset.
 - `results/`: generated charts and summary CSVs from the local run.
