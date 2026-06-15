@@ -253,6 +253,60 @@ Full error tables:
 
 False positives are real postings that the model flagged as fake. False negatives are fake postings that the model missed. These examples are useful for the final discussion because they connect metrics to real-world consequences.
 
+## Expanded Error Analysis
+
+The expanded notebook analysis compares all four prediction groups:
+
+- True positives: fake postings correctly flagged as fake.
+- False negatives: fake postings missed by the model.
+- False positives: real postings incorrectly flagged as fake.
+- True negatives: real postings correctly ignored.
+
+New error-analysis outputs:
+
+- [cleaned_error_group_feature_summary.csv](results/tables/cleaned_error_group_feature_summary.csv)
+- [cleaned_error_group_top_categories.csv](results/tables/cleaned_error_group_top_categories.csv)
+- [cleaned_error_examples_for_discussion.csv](results/tables/cleaned_error_examples_for_discussion.csv)
+
+![Cleaned error group counts](results/figures/cleaned_error_group_counts.png)
+
+![Cleaned error group feature rates](results/figures/cleaned_error_group_feature_rates.png)
+
+The example table is designed for the final write-up or presentation. It includes false positive and false negative postings, description snippets, model scores, and a short possible reason the model may have been confused.
+
+## Threshold Tradeoff Analysis
+
+A fake-job detector does not have to use the default model threshold. In a real review workflow, the threshold could be adjusted depending on whether the priority is catching more fake jobs or reducing false accusations.
+
+| Threshold | Flagged Rate | True Positives | False Positives | False Negatives | Fake Precision | Fake Recall | Fake F1 |
+|---:|---:|---:|---:|---:|---:|---:|---:|
+| -0.9649 | 0.1500 | 839 | 1,843 | 27 | 0.3128 | 0.9688 | 0.4729 |
+| -0.7289 | 0.1000 | 823 | 965 | 43 | 0.4603 | 0.9503 | 0.6202 |
+| -0.5056 | 0.0750 | 807 | 534 | 59 | 0.6018 | 0.9319 | 0.7313 |
+| -0.0870 | 0.0500 | 742 | 152 | 124 | 0.8300 | 0.8568 | 0.8432 |
+| 0.0000 | 0.0471 | 727 | 115 | 139 | 0.8634 | 0.8395 | 0.8513 |
+| 0.2374 | 0.0400 | 670 | 46 | 196 | 0.9358 | 0.7737 | 0.8470 |
+| 0.6742 | 0.0300 | 527 | 10 | 339 | 0.9814 | 0.6085 | 0.7512 |
+
+Full table: [cleaned_threshold_tradeoff_balanced_linear_svm.csv](results/tables/cleaned_threshold_tradeoff_balanced_linear_svm.csv)
+
+![Threshold precision recall F1](results/figures/cleaned_threshold_tradeoff_precision_recall_f1.png)
+
+![Threshold counts](results/figures/cleaned_threshold_tradeoff_counts.png)
+
+This section makes the project argument much stronger. The threshold is a policy choice, not just a technical setting. If the team wants to catch nearly all fake jobs, it can lower the threshold, but many real jobs will be sent to review. If the team wants to avoid false accusations, it can raise the threshold, but more fake jobs will be missed.
+
+## Model Recommendation Tradeoff
+
+| Model | Average Precision | Fake Precision | Fake Recall | Fake F1 | Balanced Accuracy | Recommended When |
+|---|---:|---:|---:|---:|---:|---|
+| Linear SVM balanced | 0.9140 | 0.8636 | 0.8395 | 0.8512 | 0.9164 | Catching more fake postings is the priority |
+| Linear SVM unweighted | 0.9181 | 0.9301 | 0.7933 | 0.8559 | 0.8951 | Avoiding false accusations is the priority |
+
+Full table: [final_model_recommendation_tradeoff.csv](results/tables/final_model_recommendation_tradeoff.csv)
+
+The final recommendation should not be framed as a single universal answer. The balanced Linear SVM is better when recall matters more. The unweighted Linear SVM is better when precision matters more. In both cases, the model should support human review rather than automatically rejecting job postings.
+
 ## Original vs Cleaned Dataset
 
 | Dataset | Best Model | Average Precision | ROC AUC | Fake F1 | Fake Recall | Fake Precision |
