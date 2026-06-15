@@ -107,7 +107,7 @@ Full categorical fake-rate tables:
 
 ![Original top categorical fake rates](results/figures/original_top_categorical_fake_rates.png)
 
-Some categories have noticeably higher fake rates, but category-level evidence should be interpreted carefully. A category can look risky because of dataset-specific patterns, small subgroup effects, or repeated postings.
+Some categories have noticeably higher fake rates. Category-level evidence can reflect dataset-specific patterns, small subgroup effects, or repeated postings.
 
 ## Cross-Validated Model Comparison
 
@@ -178,9 +178,7 @@ Full table: [weighted_vs_unweighted_linear_models.csv](results/tables/weighted_v
 
 ### Interpretation
 
-Class weighting changes the model's behavior. The unweighted Linear SVM has the highest fake precision and slightly higher average precision, but it catches fewer fake postings. The balanced Linear SVM catches more fake postings while accepting more false positives.
-
-This is one of the most important project findings: there is no single universally best model without deciding whether false positives or false negatives are more costly.
+Class weighting changes the model's prediction behavior. The unweighted Linear SVM had the highest fake precision and slightly higher average precision, but lower fake recall. The balanced Linear SVM had higher fake recall and lower fake precision.
 
 ## Precision-Recall Curves
 
@@ -234,49 +232,93 @@ Full table: [top_features_associated_with_real.csv](results/tables/top_features_
 
 ![Top linear SVM feature weights](results/figures/top_linear_svm_feature_weights.png)
 
-These coefficients are useful for explaining model behavior, but they should be interpreted cautiously. They reflect patterns in this dataset, not universal rules for fraud.
+These coefficients explain model behavior in this dataset. They reflect dataset-specific patterns rather than universal rules for fraud.
 
 ## Error Analysis
 
-For the cleaned dataset best model, cross-validated predictions produced:
+Error analysis was performed on cross-validated predictions from the cleaned dataset using the balanced Linear SVM model. The analysis used the model's predicted label and decision score for each row.
+
+### Error Counts
 
 | Error Type | Count |
 |---|---:|
 | False positives | 115 |
 | False negatives | 139 |
 
-Full error tables:
+Full tables:
 
 - [cleaned_best_model_error_summary.csv](results/tables/cleaned_best_model_error_summary.csv)
 - [cleaned_best_model_false_positives.csv](results/tables/cleaned_best_model_false_positives.csv)
 - [cleaned_best_model_false_negatives.csv](results/tables/cleaned_best_model_false_negatives.csv)
 
-False positives are real postings that the model flagged as fake. False negatives are fake postings that the model missed. These examples are useful for the final discussion because they connect metrics to real-world consequences.
+False positives are real postings predicted as fake. False negatives are fake postings predicted as real.
 
-## Expanded Error Analysis
+### Four-Group Error Summary
 
-The expanded notebook analysis compares all four prediction groups:
+The expanded error analysis separated predictions into four groups:
 
-- True positives: fake postings correctly flagged as fake.
-- False negatives: fake postings missed by the model.
-- False positives: real postings incorrectly flagged as fake.
-- True negatives: real postings correctly ignored.
+- True positives: fake postings predicted as fake.
+- False negatives: fake postings predicted as real.
+- False positives: real postings predicted as fake.
+- True negatives: real postings predicted as real.
 
-New error-analysis outputs:
+| Prediction Group | Count | Mean Score for Fake | Mean Title Chars | Mean Description Chars | Mean Requirements Chars | Mean Company Profile Chars | Company Logo Rate | Questions Rate | Salary Range Rate | Benefits Rate | Company Profile Rate |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| True positive | 727 | 0.938 | 31.171 | 1154.351 | 441.301 | 245.927 | 0.338 | 0.275 | 0.248 | 0.589 | 0.331 |
+| False negative | 139 | -0.545 | 28.029 | 1157.367 | 470.885 | 152.252 | 0.266 | 0.360 | 0.309 | 0.532 | 0.273 |
+| False positive | 115 | 0.289 | 26.722 | 981.330 | 404.330 | 121.391 | 0.183 | 0.322 | 0.330 | 0.487 | 0.165 |
+| True negative | 16,899 | -1.746 | 28.433 | 1222.852 | 598.780 | 644.287 | 0.823 | 0.503 | 0.154 | 0.598 | 0.845 |
 
-- [cleaned_error_group_feature_summary.csv](results/tables/cleaned_error_group_feature_summary.csv)
-- [cleaned_error_group_top_categories.csv](results/tables/cleaned_error_group_top_categories.csv)
-- [cleaned_error_examples_for_discussion.csv](results/tables/cleaned_error_examples_for_discussion.csv)
+Full table: [cleaned_error_group_feature_summary.csv](results/tables/cleaned_error_group_feature_summary.csv)
 
 ![Cleaned error group counts](results/figures/cleaned_error_group_counts.png)
 
 ![Cleaned error group feature rates](results/figures/cleaned_error_group_feature_rates.png)
 
-The example table is designed for the final write-up or presentation. It includes false positive and false negative postings, description snippets, model scores, and a short possible reason the model may have been confused.
+Interpretation: false positives had lower company logo and company profile rates than true negatives. False positives also had shorter average descriptions, requirements, company profiles, and benefits than true negatives. False negatives had negative mean model scores, which means the model assigned them to the real class despite their actual fake label.
 
-## Threshold Tradeoff Analysis
+### Categorical Error Patterns
 
-A fake-job detector does not have to use the default model threshold. In a real review workflow, the threshold could be adjusted depending on whether the priority is catching more fake jobs or reducing false accusations.
+The notebook also summarized the most frequent categorical values within each prediction group for industry, function, employment type, required experience, and required education.
+
+Full table: [cleaned_error_group_top_categories.csv](results/tables/cleaned_error_group_top_categories.csv)
+
+This table accounts for categorical patterns in model errors. It is useful for checking whether mistakes are concentrated in specific industries, job functions, employment types, or education/experience categories.
+
+### Example-Level Error Review
+
+The example-level table contains selected false positive and false negative rows with job title, metadata, model score, description snippet, and a short rule-based note describing observable properties of the row.
+
+Full table: [cleaned_error_examples_for_discussion.csv](results/tables/cleaned_error_examples_for_discussion.csv)
+
+This table accounts for individual error cases. It is separate from the aggregate count, feature-summary, and category-summary tables.
+
+### Error Analysis Output Inventory
+
+All generated error-analysis outputs are listed below.
+
+Tables:
+
+- [cleaned_best_model_error_summary.csv](results/tables/cleaned_best_model_error_summary.csv)
+- [cleaned_best_model_false_positives.csv](results/tables/cleaned_best_model_false_positives.csv)
+- [cleaned_best_model_false_negatives.csv](results/tables/cleaned_best_model_false_negatives.csv)
+- [cleaned_error_group_feature_summary.csv](results/tables/cleaned_error_group_feature_summary.csv)
+- [cleaned_error_group_top_categories.csv](results/tables/cleaned_error_group_top_categories.csv)
+- [cleaned_error_examples_for_discussion.csv](results/tables/cleaned_error_examples_for_discussion.csv)
+- [cleaned_threshold_tradeoff_balanced_linear_svm.csv](results/tables/cleaned_threshold_tradeoff_balanced_linear_svm.csv)
+- [final_model_recommendation_tradeoff.csv](results/tables/final_model_recommendation_tradeoff.csv)
+
+Figures:
+
+- [cleaned_best_model_confusion_matrix.png](results/figures/cleaned_best_model_confusion_matrix.png)
+- [cleaned_error_group_counts.png](results/figures/cleaned_error_group_counts.png)
+- [cleaned_error_group_feature_rates.png](results/figures/cleaned_error_group_feature_rates.png)
+- [cleaned_threshold_tradeoff_counts.png](results/figures/cleaned_threshold_tradeoff_counts.png)
+- [cleaned_threshold_tradeoff_precision_recall_f1.png](results/figures/cleaned_threshold_tradeoff_precision_recall_f1.png)
+
+## Threshold Analysis
+
+Threshold analysis was performed using the balanced Linear SVM decision scores on cross-validated predictions from the cleaned dataset. Each threshold produced a different number of postings predicted as fake.
 
 | Threshold | Flagged Rate | True Positives | False Positives | False Negatives | Fake Precision | Fake Recall | Fake F1 |
 |---:|---:|---:|---:|---:|---:|---:|---:|
@@ -294,18 +336,18 @@ Full table: [cleaned_threshold_tradeoff_balanced_linear_svm.csv](results/tables/
 
 ![Threshold counts](results/figures/cleaned_threshold_tradeoff_counts.png)
 
-This section makes the project argument much stronger. The threshold is a policy choice, not just a technical setting. If the team wants to catch nearly all fake jobs, it can lower the threshold, but many real jobs will be sent to review. If the team wants to avoid false accusations, it can raise the threshold, but more fake jobs will be missed.
+Interpretation: lower thresholds increased fake recall and increased the number of false positives. Higher thresholds increased fake precision and increased the number of false negatives. At the default threshold of 0.0000, the model produced 727 true positives, 115 false positives, and 139 false negatives. At a threshold of -0.9649, fake recall increased to 0.9688, while fake precision decreased to 0.3128. At a threshold of 0.6742, fake precision increased to 0.9814, while fake recall decreased to 0.6085.
 
-## Model Recommendation Tradeoff
+## Balanced vs Unweighted Linear SVM Tradeoff
 
-| Model | Average Precision | Fake Precision | Fake Recall | Fake F1 | Balanced Accuracy | Recommended When |
+| Model | Average Precision | Fake Precision | Fake Recall | Fake F1 | Balanced Accuracy | Interpretation |
 |---|---:|---:|---:|---:|---:|---|
-| Linear SVM balanced | 0.9140 | 0.8636 | 0.8395 | 0.8512 | 0.9164 | Catching more fake postings is the priority |
-| Linear SVM unweighted | 0.9181 | 0.9301 | 0.7933 | 0.8559 | 0.8951 | Avoiding false accusations is the priority |
+| Linear SVM balanced | 0.9140 | 0.8636 | 0.8395 | 0.8512 | 0.9164 | Higher fake recall |
+| Linear SVM unweighted | 0.9181 | 0.9301 | 0.7933 | 0.8559 | 0.8951 | Higher fake precision |
 
 Full table: [final_model_recommendation_tradeoff.csv](results/tables/final_model_recommendation_tradeoff.csv)
 
-The final recommendation should not be framed as a single universal answer. The balanced Linear SVM is better when recall matters more. The unweighted Linear SVM is better when precision matters more. In both cases, the model should support human review rather than automatically rejecting job postings.
+Interpretation: the balanced Linear SVM had higher fake recall than the unweighted Linear SVM. The unweighted Linear SVM had higher fake precision and slightly higher fake F1. This comparison shows that model selection changes depending on whether the analysis prioritizes recall or precision for the fake class.
 
 ## Original vs Cleaned Dataset
 
@@ -323,11 +365,11 @@ The cleaned dataset performs only slightly better than the original dataset. Tha
 1. The class imbalance is central to the project. Only 4.84% of postings are fake.
 2. Accuracy is misleading. The dummy majority baseline reaches 95.16% accuracy while detecting no fake postings.
 3. Linear SVM models perform best overall on the imbalanced text classification task.
-4. Class weighting changes the precision-recall tradeoff. Balanced models catch more fake jobs, while unweighted models tend to be more conservative.
+4. Class weighting changes the precision-recall tradeoff. Balanced models had higher fake-class recall, while unweighted models had higher fake-class precision.
 5. The cleaned dataset only slightly improves performance compared with the original.
 6. Average precision, fake-class recall, fake-class precision, and fake-class F1 are more useful than accuracy for model selection.
-7. A real-world version of this model should support human review rather than automatically rejecting job postings.
+7. Threshold analysis showed that lower thresholds increased fake recall and false positives, while higher thresholds increased fake precision and false negatives.
 
-## Recommended Final Project Claim
+## Summary Claim
 
-The results show that fake job posting detection should be evaluated as an imbalanced classification problem. Accuracy alone hides whether a model can detect the rare but important fake class. Using cross-validation and minority-class metrics, class-weighted linear models provide strong performance while making the precision-recall tradeoff visible.
+The results show that fake job posting detection is an imbalanced classification problem. Accuracy alone does not show whether a model detects the rare fake class. Stratified cross-validation, minority-class metrics, threshold analysis, and error analysis provide a more complete evaluation of model performance.
