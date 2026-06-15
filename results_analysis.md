@@ -6,9 +6,9 @@ This document summarizes the main findings from the fake job postings project. I
 
 The dataset is highly imbalanced: only about 4.84% of job postings are labeled fake. Because of that imbalance, accuracy is not a reliable headline metric. A majority-class baseline can reach about 95.16% accuracy while identifying zero fake postings.
 
-The strongest overall classic model was a linear SVM using TF-IDF text features plus metadata. The cleaned and feature-engineered dataset performed only slightly better than the original dataset, suggesting that most of the predictive signal is already present in the raw text fields.
+The highest-performing classic model by average precision was a linear SVM using TF-IDF text features plus metadata. The cleaned and feature-engineered dataset performed only slightly better than the original dataset. This indicates that most of the predictive signal came from the original text fields.
 
-The most useful project framing is therefore:
+The project is framed as follows:
 
 **Fake job detection is not just a classification problem. It is an imbalanced classification problem where model selection depends on the precision-recall tradeoff for the rare fake class.**
 
@@ -39,7 +39,7 @@ Full table: [dataset_summary.csv](results/tables/dataset_summary.csv)
 
 ![Original class balance](results/figures/original_class_balance.png)
 
-The imbalance is the core modeling issue. Since real postings dominate the data, a model can look strong under accuracy while still failing to detect fake postings.
+The imbalance is the core modeling issue. Since real postings dominate the data, a model can have high accuracy while still failing to detect fake postings.
 
 ## Missingness Analysis
 
@@ -81,7 +81,7 @@ Full table: [original_missing_rates_top15.csv](results/tables/original_missing_r
 
 ![Original missing rates](results/figures/original_missing_rates_top15.png)
 
-The cleaned dataset reduces missingness in several categorical fields by filling or engineering derived features. However, the modeling results show that this cleanup only slightly changes performance.
+The cleaned dataset reduced missingness in several categorical fields by filling values or engineering derived features. The model comparison results show that these changes produced only small performance differences compared with the original dataset.
 
 ## Text Length Patterns
 
@@ -94,7 +94,7 @@ Full text length summaries:
 
 ![Original text length by label](results/figures/original_text_length_by_label.png)
 
-Text fields are central to the strongest models. The linear SVM and logistic regression pipelines use TF-IDF features from title, company profile, description, requirements, and benefits.
+The highest-performing models used TF-IDF features from title, company profile, description, requirements, and benefits. This means the model comparison primarily evaluates text-based classification with additional metadata features.
 
 ## Categorical Fake Rates
 
@@ -107,11 +107,11 @@ Full categorical fake-rate tables:
 
 ![Original top categorical fake rates](results/figures/original_top_categorical_fake_rates.png)
 
-Some categories have noticeably higher fake rates. Category-level evidence can reflect dataset-specific patterns, small subgroup effects, or repeated postings.
+Some categories had higher observed fake rates than others. These category-level rates describe the dataset distribution and may reflect dataset-specific patterns, small subgroup effects, or repeated postings.
 
 ## Cross-Validated Model Comparison
 
-All models were evaluated with stratified 5-fold cross-validation. The main metric is average precision because it is more informative for rare positive-class detection than accuracy.
+All models were evaluated with stratified 5-fold cross-validation. Average precision was used as the primary comparison metric because the positive class is rare and accuracy is affected by the majority real-posting class.
 
 | Dataset | Model | Accuracy | Balanced Accuracy | ROC AUC | Average Precision | Fake Precision | Fake Recall | Fake F1 |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
@@ -134,13 +134,13 @@ Full table: [cv_model_comparison.csv](results/tables/cv_model_comparison.csv)
 
 ### Interpretation
 
-The dummy baseline proves why accuracy is misleading. It achieves 95.16% accuracy but has 0.00 fake recall and 0.00 fake F1 because it never predicts the fake class.
+The dummy baseline shows why accuracy is misleading for this dataset. It achieved 95.16% accuracy, but fake recall and fake F1 were both 0.00 because the model never predicted the fake class.
 
-The linear SVM performs best overall. Logistic regression also performs well, especially in recall, but has lower precision. Complement Naive Bayes catches many fake postings but creates many false positives, giving it a low fake-class precision.
+The balanced Linear SVM had the highest average precision in both dataset versions. Balanced Logistic Regression had higher fake recall than the balanced Linear SVM, but lower fake precision. Complement Naive Bayes had high fake recall and low fake precision, which means it predicted many postings as fake and produced more false positives.
 
-## Best Model Classification Reports
+## Highest Average Precision Model Classification Reports
 
-The best model by average precision for both datasets was the balanced Linear SVM.
+The model with the highest average precision for both datasets was the balanced Linear SVM.
 
 | Dataset | Class | Precision | Recall | F1 | Support |
 |---|---|---:|---:|---:|---:|
@@ -155,7 +155,7 @@ Full table: [best_model_classification_reports.csv](results/tables/best_model_cl
 
 ![Original best model confusion matrix](results/figures/original_best_model_confusion_matrix.png)
 
-The cleaned dataset has fake-class recall of 0.8395 and fake-class precision of 0.8634 for the balanced Linear SVM. That is a strong result for a classic ML model on an imbalanced text classification task.
+For the cleaned dataset, the balanced Linear SVM had fake-class recall of 0.8395 and fake-class precision of 0.8634. These values show that the model identified most fake postings while maintaining similar precision on the fake class.
 
 ## Weighted vs Unweighted Linear Models
 
@@ -178,7 +178,7 @@ Full table: [weighted_vs_unweighted_linear_models.csv](results/tables/weighted_v
 
 ### Interpretation
 
-Class weighting changes the model's prediction behavior. The unweighted Linear SVM had the highest fake precision and slightly higher average precision, but lower fake recall. The balanced Linear SVM had higher fake recall and lower fake precision.
+Class weighting changed the model's prediction behavior. The unweighted Linear SVM produced fewer fake predictions, which resulted in higher fake precision and lower fake recall. The balanced Linear SVM produced more fake predictions, which resulted in higher fake recall and lower fake precision.
 
 ## Precision-Recall Curves
 
@@ -186,11 +186,11 @@ Class weighting changes the model's prediction behavior. The unweighted Linear S
 
 ![Original best model precision-recall curve](results/figures/original_best_model_precision_recall_curve.png)
 
-Precision-recall curves are especially useful here because the positive class is rare. They show the tradeoff between catching more fake postings and keeping the flagged-posting list accurate.
+The precision-recall curves show how fake-class precision and fake-class recall change across decision thresholds. This view is relevant because the positive class is rare and the default threshold is only one possible operating point.
 
 ## Feature Interpretation
 
-The best linear model can be inspected through feature coefficients. Positive coefficients push predictions toward fake, while negative coefficients push predictions toward real.
+The selected linear model can be inspected through feature coefficients. Positive coefficients push predictions toward fake, while negative coefficients push predictions toward real.
 
 ### Top Features Associated With Fake Postings
 
@@ -232,7 +232,7 @@ Full table: [top_features_associated_with_real.csv](results/tables/top_features_
 
 ![Top linear SVM feature weights](results/figures/top_linear_svm_feature_weights.png)
 
-These coefficients explain model behavior in this dataset. They reflect dataset-specific patterns rather than universal rules for fraud.
+These coefficients describe how the fitted Linear SVM used the available features in this dataset. Positive coefficients moved predictions toward the fake class, while negative coefficients moved predictions toward the real class. The coefficients are dataset-specific model outputs, not universal indicators of fraud.
 
 ## Error Analysis
 
@@ -275,7 +275,7 @@ Full table: [cleaned_error_group_feature_summary.csv](results/tables/cleaned_err
 
 ![Cleaned error group feature rates](results/figures/cleaned_error_group_feature_rates.png)
 
-Interpretation: false positives had lower company logo and company profile rates than true negatives. False positives also had shorter average descriptions, requirements, company profiles, and benefits than true negatives. False negatives had negative mean model scores, which means the model assigned them to the real class despite their actual fake label.
+Interpretation: among real postings, the rows incorrectly predicted as fake had lower company logo and company profile rates than the rows correctly predicted as real. The false-positive group also had shorter average descriptions, requirements, company profiles, and benefits than the true-negative group. Among fake postings, the rows missed by the model had negative decision scores, which is why they were predicted as real.
 
 ### Categorical Error Patterns
 
@@ -283,7 +283,7 @@ The notebook also summarized the most frequent categorical values within each pr
 
 Full table: [cleaned_error_group_top_categories.csv](results/tables/cleaned_error_group_top_categories.csv)
 
-This table accounts for categorical patterns in model errors. It is useful for checking whether mistakes are concentrated in specific industries, job functions, employment types, or education/experience categories.
+This table summarizes categorical values within each prediction group. It shows whether false positives, false negatives, true positives, or true negatives are concentrated in specific industries, job functions, employment types, or education/experience categories.
 
 ### Example-Level Error Review
 
@@ -291,7 +291,7 @@ The example-level table contains selected false positive and false negative rows
 
 Full table: [cleaned_error_examples_for_discussion.csv](results/tables/cleaned_error_examples_for_discussion.csv)
 
-This table accounts for individual error cases. It is separate from the aggregate count, feature-summary, and category-summary tables.
+This table provides row-level examples of model errors. It complements the aggregate error counts, feature summaries, and category summaries.
 
 ### Error Rates by Binary Feature Presence
 
@@ -318,7 +318,7 @@ Full table: [cleaned_binary_feature_error_rates.csv](results/tables/cleaned_bina
 
 ![Binary feature error rates](results/figures/cleaned_binary_feature_error_rates.png)
 
-Interpretation: false positive rates were higher when `has_company_logo = 0` and when `has_company_profile = 0`. This indicates that real postings without a logo or company profile were more likely to be incorrectly predicted as fake.
+Interpretation: among real postings, the false positive rate was higher when `has_company_logo = 0` than when `has_company_logo = 1`. The same pattern appeared for `has_company_profile`: real postings without a company profile had a higher false positive rate than real postings with a company profile. Among fake postings, false negative rates also varied by binary feature value, but the largest contrast in this table is the false positive rate for missing logo/profile information.
 
 ### Error Rates by Text Length Bucket
 
@@ -330,7 +330,7 @@ Full table: [cleaned_text_length_bucket_error_rates.csv](results/tables/cleaned_
 
 ![Text length false negative rates](results/figures/cleaned_text_length_bucket_false_negative_rate_among_fake.png)
 
-Interpretation: the shortest company profile bucket had a higher false positive rate than longer company profile buckets. False negative rates varied across text fields and buckets, indicating that missed fake postings were not explained by one text-length feature alone.
+Interpretation: among real postings, the shortest company profile bucket had a higher false positive rate than longer company profile buckets. Among fake postings, false negative rates varied across text fields and length buckets. No single text-length field fully explains which fake postings were missed.
 
 ### Score Distribution by Prediction Group
 
@@ -349,7 +349,7 @@ Full table: [cleaned_score_summary_by_prediction_group.csv](results/tables/clean
 
 ![Score distribution density](results/figures/cleaned_score_distribution_by_prediction_group_density.png)
 
-Interpretation: false positives had positive scores, but their mean score was lower than the true positive mean score. False negatives had negative scores, but their maximum score was close to zero. This indicates that some errors occurred near the decision threshold, while the most confident errors were farther from zero.
+Interpretation: false positives had positive decision scores because they were predicted as fake, but their average score was lower than the average score for true positives. False negatives had negative decision scores because they were predicted as real, but the least negative false negatives were close to the zero threshold. This shows that some errors were near the decision boundary, while other errors were made with higher model confidence.
 
 ### Most Confident Mistakes and Borderline Cases
 
@@ -361,7 +361,7 @@ Full tables:
 - [cleaned_borderline_cases.csv](results/tables/cleaned_borderline_cases.csv)
 - [cleaned_least_confident_correct_cases.csv](results/tables/cleaned_least_confident_correct_cases.csv)
 
-Interpretation: the most confident false positives include real postings with high fake-class scores. Borderline cases include both correct and incorrect predictions near the zero threshold, which explains why threshold changes affect the number of false positives and false negatives.
+Interpretation: the most confident false positives are real postings with the highest positive fake-class scores. The most confident false negatives are fake postings with the most negative fake-class scores. Borderline cases are postings with scores closest to zero; these cases are most likely to change predicted class when the threshold changes.
 
 ### Error Analysis Output Inventory
 
@@ -417,7 +417,7 @@ Full table: [cleaned_threshold_tradeoff_balanced_linear_svm.csv](results/tables/
 
 ![Threshold counts](results/figures/cleaned_threshold_tradeoff_counts.png)
 
-Interpretation: lower thresholds increased fake recall and increased the number of false positives. Higher thresholds increased fake precision and increased the number of false negatives. At the default threshold of 0.0000, the model produced 727 true positives, 115 false positives, and 139 false negatives. At a threshold of -0.9649, fake recall increased to 0.9688, while fake precision decreased to 0.3128. At a threshold of 0.6742, fake precision increased to 0.9814, while fake recall decreased to 0.6085.
+Interpretation: as the threshold decreased, more postings were predicted as fake. This increased fake recall and also increased false positives. As the threshold increased, fewer postings were predicted as fake. This increased fake precision and also increased false negatives. At the default threshold of 0.0000, the model produced 727 true positives, 115 false positives, and 139 false negatives. At -0.9649, fake recall increased to 0.9688 and fake precision decreased to 0.3128. At 0.6742, fake precision increased to 0.9814 and fake recall decreased to 0.6085.
 
 ## Balanced vs Unweighted Linear SVM Tradeoff
 
@@ -428,7 +428,7 @@ Interpretation: lower thresholds increased fake recall and increased the number 
 
 Full table: [final_model_recommendation_tradeoff.csv](results/tables/final_model_recommendation_tradeoff.csv)
 
-Interpretation: the balanced Linear SVM had higher fake recall than the unweighted Linear SVM. The unweighted Linear SVM had higher fake precision and slightly higher fake F1. This comparison shows that model selection changes depending on whether the analysis prioritizes recall or precision for the fake class.
+Interpretation: the balanced Linear SVM had higher fake recall than the unweighted Linear SVM. The unweighted Linear SVM had higher fake precision and slightly higher fake F1. The balanced model predicted more fake postings, while the unweighted model made fewer fake predictions.
 
 ## Original vs Cleaned Dataset
 
@@ -439,16 +439,16 @@ Interpretation: the balanced Linear SVM had higher fake recall than the unweight
 
 Full table: [top_model_by_dataset.csv](results/tables/top_model_by_dataset.csv)
 
-The cleaned dataset performs only slightly better than the original dataset. That finding supports the idea that text content is carrying most of the predictive signal. The engineered features still help with EDA and interpretability, but they do not dramatically change model performance.
+The cleaned dataset performed only slightly better than the original dataset. This result indicates that the original text fields carried most of the predictive signal. The engineered features supported EDA and interpretation, but they did not substantially change model performance.
 
 ## Final Conclusions
 
 1. The class imbalance is central to the project. Only 4.84% of postings are fake.
 2. Accuracy is misleading. The dummy majority baseline reaches 95.16% accuracy while detecting no fake postings.
-3. Linear SVM models perform best overall on the imbalanced text classification task.
+3. Linear SVM models had the highest average precision values in the model comparison.
 4. Class weighting changes the precision-recall tradeoff. Balanced models had higher fake-class recall, while unweighted models had higher fake-class precision.
 5. The cleaned dataset only slightly improves performance compared with the original.
-6. Average precision, fake-class recall, fake-class precision, and fake-class F1 are more useful than accuracy for model selection.
+6. Average precision, fake-class recall, fake-class precision, and fake-class F1 provide more information than accuracy for model selection on this imbalanced dataset.
 7. Threshold analysis showed that lower thresholds increased fake recall and false positives, while higher thresholds increased fake precision and false negatives.
 
 ## Summary Claim
