@@ -293,6 +293,76 @@ Full table: [cleaned_error_examples_for_discussion.csv](results/tables/cleaned_e
 
 This table accounts for individual error cases. It is separate from the aggregate count, feature-summary, and category-summary tables.
 
+### Error Rates by Binary Feature Presence
+
+Error rates were calculated separately for binary metadata features. For each feature value, the false positive rate was calculated among real postings and the false negative rate was calculated among fake postings.
+
+| Feature | Value | Rows | False Positive Rate Among Real | False Negative Rate Among Fake |
+|---|---:|---:|---:|---:|
+| has_company_logo | 0 | 3,660 | 0.0305 | 0.1750 |
+| has_company_logo | 1 | 14,220 | 0.0015 | 0.1307 |
+| has_questions | 0 | 9,088 | 0.0092 | 0.1445 |
+| has_questions | 1 | 8,792 | 0.0043 | 0.2000 |
+| has_salary_range | 0 | 15,012 | 0.0054 | 0.1493 |
+| has_salary_range | 1 | 2,868 | 0.0144 | 0.1928 |
+| has_benefits | 0 | 7,212 | 0.0086 | 0.1786 |
+| has_benefits | 1 | 10,668 | 0.0055 | 0.1474 |
+| has_company_profile | 0 | 3,308 | 0.0353 | 0.1721 |
+| has_company_profile | 1 | 14,572 | 0.0013 | 0.1362 |
+| has_department | 0 | 11,547 | 0.0068 | 0.1751 |
+| has_department | 1 | 6,333 | 0.0067 | 0.1373 |
+| telecommuting | 0 | 17,113 | 0.0065 | 0.1596 |
+| telecommuting | 1 | 767 | 0.0128 | 0.1719 |
+
+Full table: [cleaned_binary_feature_error_rates.csv](results/tables/cleaned_binary_feature_error_rates.csv)
+
+![Binary feature error rates](results/figures/cleaned_binary_feature_error_rates.png)
+
+Interpretation: false positive rates were higher when `has_company_logo = 0` and when `has_company_profile = 0`. This indicates that real postings without a logo or company profile were more likely to be incorrectly predicted as fake.
+
+### Error Rates by Text Length Bucket
+
+Text length buckets were created for title, description, requirements, company profile, and benefits. Within each bucket, false positive and false negative rates were calculated.
+
+Full table: [cleaned_text_length_bucket_error_rates.csv](results/tables/cleaned_text_length_bucket_error_rates.csv)
+
+![Text length false positive rates](results/figures/cleaned_text_length_bucket_false_positive_rate_among_real.png)
+
+![Text length false negative rates](results/figures/cleaned_text_length_bucket_false_negative_rate_among_fake.png)
+
+Interpretation: the shortest company profile bucket had a higher false positive rate than longer company profile buckets. False negative rates varied across text fields and buckets, indicating that missed fake postings were not explained by one text-length feature alone.
+
+### Score Distribution by Prediction Group
+
+The balanced Linear SVM decision score was summarized by prediction group.
+
+| Prediction Group | Count | Mean | Median | Std. Dev. | Min | Max |
+|---|---:|---:|---:|---:|---:|---:|
+| True positive | 727 | 0.9380 | 0.9534 | 0.4736 | 0.0042 | 2.7637 |
+| False negative | 139 | -0.5447 | -0.4215 | 0.4260 | -2.4067 | -0.0090 |
+| False positive | 115 | 0.2891 | 0.1980 | 0.2916 | 0.0045 | 1.8085 |
+| True negative | 16,899 | -1.7461 | -1.7392 | 0.6197 | -4.3400 | -0.0024 |
+
+Full table: [cleaned_score_summary_by_prediction_group.csv](results/tables/cleaned_score_summary_by_prediction_group.csv)
+
+![Score distribution boxplot](results/figures/cleaned_score_distribution_by_prediction_group_boxplot.png)
+
+![Score distribution density](results/figures/cleaned_score_distribution_by_prediction_group_density.png)
+
+Interpretation: false positives had positive scores, but their mean score was lower than the true positive mean score. False negatives had negative scores, but their maximum score was close to zero. This indicates that some errors occurred near the decision threshold, while the most confident errors were farther from zero.
+
+### Most Confident Mistakes and Borderline Cases
+
+The most confident mistakes were identified by sorting false positives by highest fake-class score and false negatives by lowest fake-class score. Borderline cases were identified by the smallest absolute distance from the default threshold of zero.
+
+Full tables:
+
+- [cleaned_most_confident_mistakes.csv](results/tables/cleaned_most_confident_mistakes.csv)
+- [cleaned_borderline_cases.csv](results/tables/cleaned_borderline_cases.csv)
+- [cleaned_least_confident_correct_cases.csv](results/tables/cleaned_least_confident_correct_cases.csv)
+
+Interpretation: the most confident false positives include real postings with high fake-class scores. Borderline cases include both correct and incorrect predictions near the zero threshold, which explains why threshold changes affect the number of false positives and false negatives.
+
 ### Error Analysis Output Inventory
 
 All generated error-analysis outputs are listed below.
@@ -305,6 +375,12 @@ Tables:
 - [cleaned_error_group_feature_summary.csv](results/tables/cleaned_error_group_feature_summary.csv)
 - [cleaned_error_group_top_categories.csv](results/tables/cleaned_error_group_top_categories.csv)
 - [cleaned_error_examples_for_discussion.csv](results/tables/cleaned_error_examples_for_discussion.csv)
+- [cleaned_binary_feature_error_rates.csv](results/tables/cleaned_binary_feature_error_rates.csv)
+- [cleaned_text_length_bucket_error_rates.csv](results/tables/cleaned_text_length_bucket_error_rates.csv)
+- [cleaned_score_summary_by_prediction_group.csv](results/tables/cleaned_score_summary_by_prediction_group.csv)
+- [cleaned_most_confident_mistakes.csv](results/tables/cleaned_most_confident_mistakes.csv)
+- [cleaned_borderline_cases.csv](results/tables/cleaned_borderline_cases.csv)
+- [cleaned_least_confident_correct_cases.csv](results/tables/cleaned_least_confident_correct_cases.csv)
 - [cleaned_threshold_tradeoff_balanced_linear_svm.csv](results/tables/cleaned_threshold_tradeoff_balanced_linear_svm.csv)
 - [final_model_recommendation_tradeoff.csv](results/tables/final_model_recommendation_tradeoff.csv)
 
@@ -313,6 +389,11 @@ Figures:
 - [cleaned_best_model_confusion_matrix.png](results/figures/cleaned_best_model_confusion_matrix.png)
 - [cleaned_error_group_counts.png](results/figures/cleaned_error_group_counts.png)
 - [cleaned_error_group_feature_rates.png](results/figures/cleaned_error_group_feature_rates.png)
+- [cleaned_binary_feature_error_rates.png](results/figures/cleaned_binary_feature_error_rates.png)
+- [cleaned_text_length_bucket_false_positive_rate_among_real.png](results/figures/cleaned_text_length_bucket_false_positive_rate_among_real.png)
+- [cleaned_text_length_bucket_false_negative_rate_among_fake.png](results/figures/cleaned_text_length_bucket_false_negative_rate_among_fake.png)
+- [cleaned_score_distribution_by_prediction_group_boxplot.png](results/figures/cleaned_score_distribution_by_prediction_group_boxplot.png)
+- [cleaned_score_distribution_by_prediction_group_density.png](results/figures/cleaned_score_distribution_by_prediction_group_density.png)
 - [cleaned_threshold_tradeoff_counts.png](results/figures/cleaned_threshold_tradeoff_counts.png)
 - [cleaned_threshold_tradeoff_precision_recall_f1.png](results/figures/cleaned_threshold_tradeoff_precision_recall_f1.png)
 
