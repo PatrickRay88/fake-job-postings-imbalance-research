@@ -1,4 +1,4 @@
-# Imbalance Research Summary
+﻿# Imbalance Research Summary
 
 ## Research Focus
 
@@ -69,15 +69,19 @@ Interpretation: the unweighted Linear SVM had higher fake precision and lower fa
 
 ## Threshold Sensitivity
 
-Changing the decision threshold for the selected balanced Linear SVM changed the number of postings predicted as fake.
+Changing the decision threshold for the selected balanced Linear SVM changed the number of postings predicted as fake. The x-axis in both threshold plots is the share of all postings predicted as fake. The y-axis is either a metric score or an outcome count, depending on the plot.
 
 ![Threshold sensitivity precision recall F1](imbalance_research_outputs/figures/threshold_sensitivity_precision_recall_f1.png)
 
+In the precision-recall-F1 plot, fake precision decreases as the flagged rate increases because the model includes more borderline real postings in the predicted-fake group. Fake recall increases because more actual fake postings are captured. Fake F1 is highest near the default threshold because that region balances precision and recall more evenly.
+
 ![Threshold sensitivity outcomes](imbalance_research_outputs/figures/threshold_sensitivity_outcomes.png)
+
+In the outcomes plot, false positives rise sharply when the share predicted as fake increases. This happens because the real class is much larger than the fake class. The dataset has 17,014 real postings and 866 fake postings, so even a small fraction of real postings being incorrectly flagged can create a large false-positive count.
 
 Full output: [threshold_sensitivity_summary.csv](imbalance_research_outputs/tables/threshold_sensitivity_summary.csv)
 
-Interpretation: lower thresholds increased fake recall and false positives. Higher thresholds increased fake precision and false negatives.
+Detailed explanation: [threshold_interpretation.md](threshold_interpretation.md)
 
 ## Cost Sensitivity
 
@@ -119,3 +123,4 @@ The results show that class imbalance affects model evaluation in three connecte
 3. Threshold choice changes the balance between false positives and false negatives.
 
 The imbalance problem is therefore not only a dataset distribution issue. It affects model selection, performance interpretation, and decision threshold behavior.
+
