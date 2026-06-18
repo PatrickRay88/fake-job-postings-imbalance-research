@@ -2,15 +2,32 @@
 
 Exploratory data analysis and classic machine learning model comparison for an imbalanced fake job postings dataset.
 
+## Separate Imbalance Research Focus
+
+This repository is a separate continuation of the original class project. The added research focus is:
+
+**How does class imbalance affect model evaluation, model selection, threshold choice, and error patterns in fake job posting detection?**
+
+Start with:
+
+- `imbalance_research_plan.md`
+- `imbalance_focused_research.ipynb`
+- `imbalance_research_summary.md`
+- `imbalance_research_outputs/`
+
 ## Files
 
 - `job_postings_eda_model_comparison.ipynb`: local notebook with saved outputs.
 - `job_postings_eda_model_comparison_colab.ipynb`: Colab-friendly notebook.
+- `imbalance_focused_research.ipynb`: focused research notebook on class imbalance, metric choice, threshold sensitivity, and error patterns.
+- `imbalance_research_plan.md`: project plan for the imbalance-focused continuation.
+- `imbalance_research_summary.md`: written summary of the imbalance-focused findings.
 - `project_framing.md`: research questions, hypotheses, methodology, and final project angle.
 - `results_analysis.md`: written summary of the project results with key tables and plots.
 - `Data/fake_jobs_cleaned.csv`: cleaned and feature-engineered dataset.
 - `Data/fake_job_postings.csv`: original dataset.
 - `results/`: generated charts and summary CSVs from the local run.
+- `imbalance_research_outputs/`: generated tables and figures from the imbalance-focused notebook.
 
 ## Recommended Colab Workflow
 
