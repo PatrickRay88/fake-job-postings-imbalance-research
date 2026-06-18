@@ -99,21 +99,48 @@ Detailed explanation: [threshold_interpretation.md](threshold_interpretation.md)
 
 ## Cost Sensitivity
 
-A simple cost sensitivity analysis was added to show how threshold choice changes when false negatives are assigned a higher cost than false positives.
+The cost sensitivity analysis evaluates how the selected decision threshold changes when different types of classification errors are assigned different costs. This is useful because the fake job class is rare, and the practical meaning of an error depends on whether the model incorrectly flags a real posting or misses a fake posting.
 
-| False Positive Cost | False Negative Cost | Selected Threshold | Flagged Rate | False Positives | False Negatives | Fake Precision | Fake Recall |
-|---:|---:|---:|---:|---:|---:|---:|---:|
-| 1 | 1 | 0.2374 | 0.0400 | 46 | 196 | 0.9358 | 0.7737 |
-| 1 | 2 | 0.0000 | 0.0471 | 115 | 139 | 0.8634 | 0.8395 |
-| 1 | 5 | -0.0870 | 0.0500 | 152 | 124 | 0.8300 | 0.8568 |
-| 1 | 10 | -0.5056 | 0.0750 | 534 | 59 | 0.6018 | 0.9319 |
-| 1 | 20 | -0.5056 | 0.0750 | 534 | 59 | 0.6018 | 0.9319 |
+The analysis uses two error types:
+
+| Error Type | Meaning |
+|---|---|
+| False positive | A real job posting incorrectly predicted as fake |
+| False negative | A fake job posting incorrectly predicted as real |
+
+The false positive cost is held constant at `1`. The false negative cost is tested at `1`, `2`, `5`, `10`, and `20`. For each threshold, total cost is calculated as:
+
+```text
+total cost = (false positives * false positive cost) + (false negatives * false negative cost)
+```
+
+The selected threshold is the threshold with the lowest total cost under each cost assumption.
+
+| False Positive Cost | False Negative Cost | Selected Threshold | Flagged Rate | False Positives | False Negatives | Fake Precision | Fake Recall | Total Cost |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 1 | 1 | 0.2374 | 0.0400 | 46 | 196 | 0.9358 | 0.7737 | 242 |
+| 1 | 2 | 0.0000 | 0.0471 | 115 | 139 | 0.8634 | 0.8395 | 393 |
+| 1 | 5 | -0.0870 | 0.0500 | 152 | 124 | 0.8300 | 0.8568 | 772 |
+| 1 | 10 | -0.5056 | 0.0750 | 534 | 59 | 0.6018 | 0.9319 | 1,124 |
+| 1 | 20 | -0.5056 | 0.0750 | 534 | 59 | 0.6018 | 0.9319 | 1,714 |
 
 Full output: [cost_sensitivity_threshold_selection.csv](imbalance_research_outputs/tables/cost_sensitivity_threshold_selection.csv)
 
 ![Cost sensitivity selected flagged rate](imbalance_research_outputs/figures/cost_sensitivity_selected_flagged_rate.png)
 
-Interpretation: as the assigned cost of false negatives increases, the selected threshold shifts toward flagging more postings as fake.
+Interpretation: when false positives and false negatives are treated equally, the selected threshold is `0.2374`. This threshold is conservative: it predicts only 4% of postings as fake, produces 46 false positives, and misses 196 fake postings. Fake precision is high at 0.9358, but fake recall is lower at 0.7737.
+
+When false negatives are assigned higher cost, the selected threshold moves downward. A lower threshold causes the model to predict fake more often. This reduces false negatives and increases fake recall, but it also increases false positives and lowers fake precision.
+
+At a false negative cost of `10`, the selected threshold is `-0.5056`. The model predicts 7.5% of postings as fake, reducing false negatives from 196 to 59. However, false positives increase from 46 to 534, and fake precision falls from 0.9358 to 0.6018. This shows the practical tradeoff: catching more fake postings requires accepting more incorrectly flagged real postings.
+
+The plot shows this same pattern visually. The x-axis is the assumed false negative cost while the false positive cost remains fixed at `1`. The y-axis is the selected flagged rate, meaning the share of all postings predicted as fake at the cost-minimizing threshold. As the false negative cost increases, the selected flagged rate increases from 0.0400 to 0.0750.
+
+The curve levels off at false negative costs of `10` and `20` because the tested thresholds are discrete. Among the available thresholds, `-0.5056` has the lowest total cost for both cost settings.
+
+This analysis is a sensitivity test, not a final operational cost model. The cost values are hypothetical, and the analysis does not estimate actual financial, ethical, or review costs. Its value is that it shows how model interpretation changes when missed fake postings are treated as more serious than incorrectly flagged real postings.
+
+Detailed explanation: [cost_sensitivity_interpretation.md](cost_sensitivity_interpretation.md)
 
 ## Error Patterns
 
@@ -137,4 +164,5 @@ The results show that class imbalance affects model evaluation in three connecte
 3. Threshold choice changes the balance between false positives and false negatives.
 
 The imbalance problem is therefore not only a dataset distribution issue. It affects model selection, performance interpretation, and decision threshold behavior.
+
 

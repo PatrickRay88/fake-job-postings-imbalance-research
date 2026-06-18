@@ -1,4 +1,4 @@
-# Fake Job Postings ML Project
+﻿# Fake Job Postings ML Project
 
 Exploratory data analysis and classic machine learning model comparison for an imbalanced fake job postings dataset.
 
@@ -13,6 +13,8 @@ Start with:
 - `imbalance_research_plan.md`
 - `imbalance_focused_research.ipynb`
 - `imbalance_research_summary.md`
+- `threshold_interpretation.md`
+- `cost_sensitivity_interpretation.md`
 - `imbalance_research_outputs/`
 
 ## Files
@@ -22,6 +24,8 @@ Start with:
 - `imbalance_focused_research.ipynb`: focused research notebook on class imbalance, metric choice, threshold sensitivity, and error patterns.
 - `imbalance_research_plan.md`: project plan for the imbalance-focused continuation.
 - `imbalance_research_summary.md`: written summary of the imbalance-focused findings.
+- `threshold_interpretation.md`: detailed explanation of threshold sensitivity plots and metrics.
+- `cost_sensitivity_interpretation.md`: detailed explanation of cost sensitivity assumptions, selected thresholds, and tradeoffs.
 - `project_framing.md`: research questions, hypotheses, methodology, and final project angle.
 - `results_analysis.md`: written summary of the project results with key tables and plots.
 - `Data/fake_jobs_cleaned.csv`: cleaned and feature-engineered dataset.
@@ -59,3 +63,4 @@ jupyter notebook job_postings_eda_model_comparison.ipynb
 The dataset is highly imbalanced, with fake postings making up about 4.84% of the rows. The project focuses on why accuracy is misleading for this task and compares classic machine learning models using imbalance-aware metrics such as average precision, ROC AUC, fake-class recall, and fake-class F1.
 
 The extended notebook also includes weighted vs unweighted model comparisons, precision-recall curves, feature interpretation, and error analysis.
+
