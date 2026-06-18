@@ -71,9 +71,23 @@ Interpretation: the unweighted Linear SVM had higher fake precision and lower fa
 
 Changing the decision threshold for the selected balanced Linear SVM changed the number of postings predicted as fake. The x-axis in both threshold plots is the share of all postings predicted as fake. The y-axis is either a metric score or an outcome count, depending on the plot.
 
-![Threshold sensitivity precision recall F1](imbalance_research_outputs/figures/threshold_sensitivity_precision_recall_f1.png)
+The separate plots below show each metric individually before comparing them together.
 
-In the precision-recall-F1 plot, fake precision decreases as the flagged rate increases because the model includes more borderline real postings in the predicted-fake group. Fake recall increases because more actual fake postings are captured. Fake F1 is highest near the default threshold because that region balances precision and recall more evenly.
+![Threshold sensitivity fake precision](imbalance_research_outputs/figures/threshold_sensitivity_fake_precision_separate.png)
+
+Fake precision decreases as the flagged rate increases because the model includes more borderline real postings in the predicted-fake group.
+
+![Threshold sensitivity fake recall](imbalance_research_outputs/figures/threshold_sensitivity_fake_recall_separate.png)
+
+Fake recall increases as the flagged rate increases because more actual fake postings are captured.
+
+![Threshold sensitivity fake F1](imbalance_research_outputs/figures/threshold_sensitivity_fake_f1_separate.png)
+
+Fake F1 is highest near the default threshold because that region balances precision and recall more evenly.
+
+![Separate threshold metric panels](imbalance_research_outputs/figures/threshold_sensitivity_separate_metric_panels.png)
+
+The panel view shows the three metrics on the same x-axis while keeping each metric in its own subplot. This avoids compressing three different metric patterns into one visual.
 
 ![Threshold sensitivity outcomes](imbalance_research_outputs/figures/threshold_sensitivity_outcomes.png)
 

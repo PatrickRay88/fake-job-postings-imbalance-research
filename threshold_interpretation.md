@@ -23,13 +23,13 @@ Threshold analysis changes this cutoff and measures how the model's predictions 
 
 Full table: [threshold_sensitivity_summary.csv](imbalance_research_outputs/tables/threshold_sensitivity_summary.csv)
 
-## Plot 1: Threshold Sensitivity for Precision, Recall, and F1
+## Separate Metric Plots
 
-![Threshold sensitivity precision recall F1](imbalance_research_outputs/figures/threshold_sensitivity_precision_recall_f1.png)
+The notebook now separates fake precision, fake recall, and fake F1 into individual plots. This is easier to interpret than one combined plot because each metric answers a different question.
 
-### X-axis
+### Shared X-axis for the Three Metric Plots
 
-The x-axis is the **share of postings predicted as fake**.
+The x-axis in each metric plot is the **share of postings predicted as fake**.
 
 For example:
 
@@ -39,17 +39,9 @@ For example:
 
 Because the actual fake rate is about 4.84%, a flagged rate near 0.05 is close to the actual class distribution. A flagged rate much higher than 0.05 means the model is predicting fake more often than fake postings actually occur in the dataset.
 
-### Y-axis
+### Plot 1: Fake Precision
 
-The y-axis is the metric score for:
-
-- fake precision
-- fake recall
-- fake F1
-
-Each line shows how that metric changes as the model predicts a larger or smaller share of postings as fake.
-
-### Fake Precision Line
+![Threshold sensitivity fake precision](imbalance_research_outputs/figures/threshold_sensitivity_fake_precision_separate.png)
 
 Fake precision measures:
 
@@ -57,11 +49,15 @@ Fake precision measures:
 Of all postings predicted as fake, how many were actually fake?
 ```
 
+The y-axis is fake precision. Higher values mean the predicted-fake group contains a larger share of actual fake postings.
+
 When the flagged rate is low, the model only predicts fake for postings with stronger fake-class scores. This produces high precision. At the 3% flagged rate, fake precision is `0.9814`, meaning almost all postings predicted as fake were actually fake.
 
 As the flagged rate increases, the model includes more borderline postings in the fake category. Many of those additional postings are real. This causes fake precision to decrease. At the 15% flagged rate, fake precision falls to `0.3128`.
 
-### Fake Recall Line
+### Plot 2: Fake Recall
+
+![Threshold sensitivity fake recall](imbalance_research_outputs/figures/threshold_sensitivity_fake_recall_separate.png)
 
 Fake recall measures:
 
@@ -69,13 +65,19 @@ Fake recall measures:
 Of all actual fake postings, how many did the model detect?
 ```
 
+The y-axis is fake recall. Higher values mean the model found a larger share of all actual fake postings.
+
 When the flagged rate is low, the model misses many fake postings because it is only flagging the highest-scoring cases. At the 3% flagged rate, fake recall is `0.6085`.
 
 As the flagged rate increases, the model predicts more postings as fake, so it captures more of the actual fake postings. At the 15% flagged rate, fake recall rises to `0.9688`.
 
-### Fake F1 Line
+### Plot 3: Fake F1
+
+![Threshold sensitivity fake F1](imbalance_research_outputs/figures/threshold_sensitivity_fake_f1_separate.png)
 
 Fake F1 combines fake precision and fake recall into one score. It is highest when precision and recall are balanced.
+
+The y-axis is fake F1. A higher value means the threshold is balancing fake precision and fake recall more effectively.
 
 In this analysis, F1 is strongest near the default threshold and nearby flagged rates:
 
@@ -87,6 +89,12 @@ F1 drops when the threshold becomes too conservative or too aggressive:
 
 - At the 3% flagged rate, recall becomes low, so F1 drops to `0.7512`.
 - At the 15% flagged rate, precision becomes low, so F1 drops to `0.4729`.
+
+### Panel Comparison
+
+![Separate threshold metric panels](imbalance_research_outputs/figures/threshold_sensitivity_separate_metric_panels.png)
+
+The panel comparison uses the same x-axis for all three metrics but separates the y-axis view by metric. This makes it easier to see that precision decreases, recall increases, and F1 peaks near the middle.
 
 ## Plot 2: Threshold Sensitivity Outcomes
 
