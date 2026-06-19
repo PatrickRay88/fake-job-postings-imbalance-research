@@ -12,11 +12,13 @@ Start with:
 
 - `imbalance_research_plan.md`
 - `imbalance_focused_research.ipynb`
+- `artifact_robustness_audit_report.md`
 - `imbalance_research_summary.md`
 - `comprehensive_imbalance_experiment_report.md`
 - `threshold_interpretation.md`
 - `cost_sensitivity_interpretation.md`
 - `imbalance_research_outputs/`
+- `artifact_audit_outputs/`
 
 ## Files
 
@@ -24,9 +26,11 @@ Start with:
 - `job_postings_eda_model_comparison_colab.ipynb`: Colab-friendly notebook.
 - `imbalance_focused_research.ipynb`: focused research notebook on class imbalance, metric choice, threshold sensitivity, and error patterns.
 - `comprehensive_imbalance_experiments.py`: reusable experiment runner for prevalence, review budget, cost sensitivity, training balance, feature ablation, label scarcity, and holdout error profiling.
+- `artifact_robustness_audit.py`: audit runner for duplicate leakage, split robustness, shortcut features, counterfactual credibility edits, subgroup robustness, and error case exports.
 - `imbalance_research_plan.md`: project plan for the imbalance-focused continuation.
 - `imbalance_research_summary.md`: written summary of the imbalance-focused findings.
 - `comprehensive_imbalance_experiment_report.md`: detailed report interpreting the expanded imbalance experiments.
+- `artifact_robustness_audit_report.md`: detailed report evaluating whether model performance is affected by artifacts, leakage, shortcuts, and robustness issues.
 - `threshold_interpretation.md`: detailed explanation of threshold sensitivity plots and metrics.
 - `cost_sensitivity_interpretation.md`: detailed explanation of cost sensitivity assumptions, selected thresholds, and tradeoffs.
 - `project_framing.md`: research questions, hypotheses, methodology, and final project angle.
@@ -66,4 +70,6 @@ jupyter notebook job_postings_eda_model_comparison.ipynb
 The dataset is highly imbalanced, with fake postings making up about 4.84% of the rows. The project focuses on why accuracy is misleading for this task and compares classic machine learning models using imbalance-aware metrics such as average precision, ROC AUC, fake-class recall, and fake-class F1.
 
 The extended notebook also includes weighted vs unweighted model comparisons, precision-recall curves, feature interpretation, and error analysis.
+
+The newest audit reframes the project around trustworthiness: whether strong fake-job detection performance is stable when duplicate content, split strategy, shortcut features, and credibility metadata are tested directly.
 

@@ -11,8 +11,12 @@ The analysis uses the existing fake job postings model outputs, then adds a focu
 - `imbalance_focused_research.ipynb`
 - `comprehensive_imbalance_experiments.py`
 - `comprehensive_imbalance_experiment_report.md`
+- `artifact_robustness_audit.py`
+- `artifact_robustness_audit_report.md`
 - `imbalance_research_outputs/tables/`
 - `imbalance_research_outputs/figures/`
+- `artifact_audit_outputs/tables/`
+- `artifact_audit_outputs/figures/`
 
 ## Expanded Research Contribution
 
@@ -28,6 +32,30 @@ The expanded experiments test:
 6. **Label scarcity sensitivity:** how rare-class performance changes when fewer fake postings are available for training.
 
 Detailed report: [comprehensive_imbalance_experiment_report.md](comprehensive_imbalance_experiment_report.md)
+
+## Artifact, Leakage, and Robustness Audit
+
+The newest audit asks whether strong model performance is trustworthy or partly explained by dataset artifacts.
+
+The audit tests:
+
+1. **Duplicate leakage:** whether exact content signatures appear in both train and test.
+2. **Split robustness:** whether performance changes under random, duplicate-group, and job-id-order splits.
+3. **Shortcut features:** whether missingness, credibility flags, and length features can predict fake postings without text.
+4. **Counterfactual credibility edits:** whether removing or adding company profile/logo/benefits changes model predictions.
+5. **Subgroup robustness:** whether errors differ by posting type and credibility metadata.
+6. **Error case studies:** which real postings are falsely flagged and which fake postings are missed.
+
+Key audit findings:
+
+- The random split has duplicate-content leakage: 13.8% of test rows share an exact content signature with training.
+- Duplicate-group splitting causes a modest drop in fake F1, from 0.8905 to 0.8786.
+- Job-id-order splitting causes a larger drop in fake recall, from 0.8657 to 0.6789.
+- Shortcut-only models perform poorly, so the classifier is not explained by flags and lengths alone.
+- Counterfactual credibility edits have a large effect: removing company profile/logo/benefits increases false positives from 17 to 143.
+- Adding generic credibility information to sparse rows reduces false positives from 17 to 4 but increases missed fake postings from 29 to 54.
+
+Detailed audit report: [artifact_robustness_audit_report.md](artifact_robustness_audit_report.md)
 
 ## Why Class Imbalance Matters
 
@@ -183,7 +211,8 @@ The results show that class imbalance affects model evaluation in several connec
 5. Review capacity changes the practical value of the model.
 6. Training balance strategies can improve or harm rare-class performance.
 7. Feature groups and label scarcity affect which errors the model makes.
+8. Duplicate leakage, split strategy, and credibility metadata affect whether performance should be trusted as real-world fraud detection.
 
-The imbalance problem is therefore not only a dataset distribution issue. It affects model selection, performance interpretation, decision threshold behavior, review-policy design, training strategy, and error analysis.
+The imbalance problem is therefore not only a dataset distribution issue. It affects model selection, performance interpretation, decision threshold behavior, review-policy design, training strategy, error analysis, and robustness claims.
 
 
