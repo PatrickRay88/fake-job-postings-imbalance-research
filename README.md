@@ -13,6 +13,7 @@ Start with:
 - `imbalance_research_plan.md`
 - `imbalance_focused_research.ipynb`
 - `imbalance_research_summary.md`
+- `comprehensive_imbalance_experiment_report.md`
 - `threshold_interpretation.md`
 - `cost_sensitivity_interpretation.md`
 - `imbalance_research_outputs/`
@@ -22,8 +23,10 @@ Start with:
 - `job_postings_eda_model_comparison.ipynb`: local notebook with saved outputs.
 - `job_postings_eda_model_comparison_colab.ipynb`: Colab-friendly notebook.
 - `imbalance_focused_research.ipynb`: focused research notebook on class imbalance, metric choice, threshold sensitivity, and error patterns.
+- `comprehensive_imbalance_experiments.py`: reusable experiment runner for prevalence, review budget, cost sensitivity, training balance, feature ablation, label scarcity, and holdout error profiling.
 - `imbalance_research_plan.md`: project plan for the imbalance-focused continuation.
 - `imbalance_research_summary.md`: written summary of the imbalance-focused findings.
+- `comprehensive_imbalance_experiment_report.md`: detailed report interpreting the expanded imbalance experiments.
 - `threshold_interpretation.md`: detailed explanation of threshold sensitivity plots and metrics.
 - `cost_sensitivity_interpretation.md`: detailed explanation of cost sensitivity assumptions, selected thresholds, and tradeoffs.
 - `project_framing.md`: research questions, hypotheses, methodology, and final project angle.

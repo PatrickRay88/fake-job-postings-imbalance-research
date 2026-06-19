@@ -9,8 +9,25 @@ This repository separates the imbalance-focused research question from the origi
 The analysis uses the existing fake job postings model outputs, then adds a focused research notebook:
 
 - `imbalance_focused_research.ipynb`
+- `comprehensive_imbalance_experiments.py`
+- `comprehensive_imbalance_experiment_report.md`
 - `imbalance_research_outputs/tables/`
 - `imbalance_research_outputs/figures/`
+
+## Expanded Research Contribution
+
+The project now goes beyond selecting the best classifier. It evaluates whether fake job detection conclusions stay stable when the underlying decision context changes.
+
+The expanded experiments test:
+
+1. **Prevalence sensitivity:** how fake precision, recall, and F1 change when the fake-job base rate changes.
+2. **Review budget sensitivity:** how many fake postings are caught when only the top-scored postings can be reviewed.
+3. **Cost sensitivity:** how the selected threshold changes when false negatives are treated as more costly.
+4. **Training distribution sensitivity:** how class weighting, undersampling, and oversampling change model behavior.
+5. **Feature group sensitivity:** whether performance comes mainly from text, metadata, binary credibility indicators, or length features.
+6. **Label scarcity sensitivity:** how rare-class performance changes when fewer fake postings are available for training.
+
+Detailed report: [comprehensive_imbalance_experiment_report.md](comprehensive_imbalance_experiment_report.md)
 
 ## Why Class Imbalance Matters
 
@@ -157,12 +174,16 @@ Interpretation: real postings without company logo or company profile informatio
 
 ## Main Research Claim
 
-The results show that class imbalance affects model evaluation in three connected ways:
+The results show that class imbalance affects model evaluation in several connected ways:
 
 1. Accuracy can hide minority-class failure.
 2. Different metrics can select different best-performing models.
 3. Threshold choice changes the balance between false positives and false negatives.
+4. Fake precision changes when the fake-job prevalence changes.
+5. Review capacity changes the practical value of the model.
+6. Training balance strategies can improve or harm rare-class performance.
+7. Feature groups and label scarcity affect which errors the model makes.
 
-The imbalance problem is therefore not only a dataset distribution issue. It affects model selection, performance interpretation, and decision threshold behavior.
+The imbalance problem is therefore not only a dataset distribution issue. It affects model selection, performance interpretation, decision threshold behavior, review-policy design, training strategy, and error analysis.
 
 
