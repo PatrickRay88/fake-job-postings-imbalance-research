@@ -1,5 +1,13 @@
 # Related Work and Research Gap
 
+## Current Focus Note
+
+This document records the broader research gap exploration. The focused manuscript is now:
+
+**Template Leakage in EMSCAD: A Leakage-Aware Re-Evaluation of Fake Job Posting Detection**
+
+See `publication_template_leakage_paper.md`, `publication_template_leakage_study.py`, and `publication_outputs/` for the narrowed publication-style version. The broader imbalance, shortcut, threshold, and archetype analyses are supporting context rather than separate main contributions.
+
 ## Proposed Research Title
 
 **Beyond Accuracy on EMSCAD: A Robustness and Shortcut Audit of Fake Job Posting Detection**

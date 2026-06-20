@@ -2,14 +2,17 @@
 
 Exploratory data analysis and classic machine learning model comparison for an imbalanced fake job postings dataset.
 
-## Separate Imbalance Research Focus
+## Publication-Style Research Focus
 
 This repository is a separate continuation of the original class project. The added research focus is:
 
-**How does class imbalance affect model evaluation, model selection, threshold choice, and error patterns in fake job posting detection?**
+**Do random train-test splits on EMSCAD overstate fake-job detection performance because repeated or near-repeated posting templates appear in both training and test data?**
 
 Start with:
 
+- `publication_template_leakage_paper.md`
+- `publication_template_leakage_study.py`
+- `publication_outputs/`
 - `related_work_and_research_gap.md`
 - `benchmark_audit_paper_outline.md`
 - `imbalance_research_plan.md`
@@ -24,6 +27,8 @@ Start with:
 - `artifact_audit_outputs/`
 - `future_work_outputs/`
 
+The strongest paper angle is now the template-leakage audit. The older imbalance, threshold, cost-sensitivity, shortcut, and archetype analyses remain useful supporting material, but the publication-style manuscript is intentionally narrower.
+
 ## Files
 
 - `job_postings_eda_model_comparison.ipynb`: local notebook with saved outputs.
@@ -32,6 +37,8 @@ Start with:
 - `comprehensive_imbalance_experiments.py`: reusable experiment runner for prevalence, review budget, cost sensitivity, training balance, feature ablation, label scarcity, and holdout error profiling.
 - `artifact_robustness_audit.py`: audit runner for duplicate leakage, split robustness, shortcut features, counterfactual credibility edits, subgroup robustness, and error case exports.
 - `future_work_extensions.py`: near-duplicate/template leakage and fake-posting archetype discovery experiments.
+- `publication_template_leakage_study.py`: repeated leakage-aware evaluation matrix for random, exact-duplicate-group, and near-template-group splits.
+- `publication_template_leakage_paper.md`: manuscript-style paper draft built from the publication matrix.
 - `related_work_and_research_gap.md`: literature-grounded research gap connecting prior future-work sections to this benchmark audit.
 - `benchmark_audit_paper_outline.md`: paper-style outline with title, abstract draft, research questions, contributions, and reporting recommendations.
 - `imbalance_research_plan.md`: project plan for the imbalance-focused continuation.
@@ -47,6 +54,7 @@ Start with:
 - `Data/fake_job_postings.csv`: original dataset.
 - `results/`: generated charts and summary CSVs from the local run.
 - `imbalance_research_outputs/`: generated tables and figures from the imbalance-focused notebook.
+- `publication_outputs/`: generated tables and figures for the focused publication matrix.
 
 ## Recommended Colab Workflow
 
@@ -79,9 +87,9 @@ The dataset is highly imbalanced, with fake postings making up about 4.84% of th
 
 The extended notebook also includes weighted vs unweighted model comparisons, precision-recall curves, feature interpretation, and error analysis.
 
-The newest audit reframes the project around trustworthiness: whether strong fake-job detection performance is stable when duplicate content, split strategy, shortcut features, and credibility metadata are tested directly.
+The newest audit reframes the project around trustworthiness: whether strong fake-job detection performance is stable when duplicate and near-template content are prevented from crossing the train-test split.
 
-The latest extension adds near-duplicate/template leakage analysis and unsupervised fake-job archetype discovery. This is the strongest research angle: EMSCAD performance appears sensitive to repeated templates, and aggregate fake-class recall hides which fake-posting archetypes are harder to detect.
+The focused publication result is that random stratified splits place about 14.13% of test rows in exact-signature overlap with training rows and about 50.94% of test rows in near-template overlap with training rows. Under near-template group splitting, Linear SVM fake-class F1 drops from 0.8391 to 0.7045 and Logistic Regression fake-class F1 drops from 0.7505 to 0.6499.
 
-The current working title is **Beyond Accuracy on EMSCAD: A Robustness and Shortcut Audit of Fake Job Posting Detection**.
+The current working title is **Template Leakage in EMSCAD: A Leakage-Aware Re-Evaluation of Fake Job Posting Detection**.
 
