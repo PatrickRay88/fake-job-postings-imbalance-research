@@ -8,15 +8,53 @@ This repository separates the imbalance-focused research question from the origi
 
 The analysis uses the existing fake job postings model outputs, then adds a focused research notebook:
 
+- `related_work_and_research_gap.md`
+- `benchmark_audit_paper_outline.md`
 - `imbalance_focused_research.ipynb`
 - `comprehensive_imbalance_experiments.py`
 - `comprehensive_imbalance_experiment_report.md`
 - `artifact_robustness_audit.py`
 - `artifact_robustness_audit_report.md`
+- `future_work_extensions.py`
+- `future_work_extension_report.md`
 - `imbalance_research_outputs/tables/`
 - `imbalance_research_outputs/figures/`
 - `artifact_audit_outputs/tables/`
 - `artifact_audit_outputs/figures/`
+- `future_work_outputs/tables/`
+- `future_work_outputs/figures/`
+
+## Literature-Grounded Framing
+
+Prior EMSCAD and online recruitment fraud studies repeatedly point toward future work involving richer context, imbalance handling, contemporary validation, company/network signals, and stronger evaluation protocols.
+
+This project uses those future-work directions to reframe the study:
+
+**Working title:** Beyond Accuracy on EMSCAD: A Robustness and Shortcut Audit of Fake Job Posting Detection
+
+**Research gap:** EMSCAD has already been used for many binary fake-vs-real classifiers, but fewer projects ask whether reported performance is stable under duplicate leakage, split strategy, shortcut features, class imbalance decisions, and credibility metadata perturbations.
+
+Related-work gap document: [related_work_and_research_gap.md](related_work_and_research_gap.md)
+
+Paper-style outline: [benchmark_audit_paper_outline.md](benchmark_audit_paper_outline.md)
+
+## New Future-Work Extension Results
+
+The newest experiments go beyond tying the project to prior literature. They add two analyses that directly address remaining benchmark weaknesses:
+
+1. **Near-duplicate / template leakage:** random splits are tested for highly similar posting templates, not only exact duplicate rows.
+2. **Fake-posting archetypes:** fraudulent postings are grouped into exploratory NMF topics, then detection recall is measured by archetype.
+
+Key findings:
+
+- At a 0.98 text-similarity threshold, 9,581 rows fall into near-duplicate/template clusters.
+- In the random split, 50.72% of test rows share a high-similarity template cluster with training.
+- A near-duplicate group split drops fake F1 from 0.8905 to 0.7208.
+- A near-duplicate group split drops fake recall from 0.8657 to 0.6368.
+- Fake postings cluster into recognizable archetypes, including broad professional postings, work-from-home/data-entry postings, cruise/service postings, home-office postings, and financing/sales postings.
+- The broad professional fake archetype is hardest to detect, with recall of 0.8344, while several smaller template-like archetypes reach 1.0000 recall in the holdout split.
+
+Detailed extension report: [future_work_extension_report.md](future_work_extension_report.md)
 
 ## Expanded Research Contribution
 
@@ -212,6 +250,8 @@ The results show that class imbalance affects model evaluation in several connec
 6. Training balance strategies can improve or harm rare-class performance.
 7. Feature groups and label scarcity affect which errors the model makes.
 8. Duplicate leakage, split strategy, and credibility metadata affect whether performance should be trusted as real-world fraud detection.
+9. Near-duplicate/template leakage is larger than exact duplicate leakage and has a stronger effect on model performance.
+10. Aggregate fake-class metrics hide that some fake-posting archetypes are easier to detect than others.
 
 The imbalance problem is therefore not only a dataset distribution issue. It affects model selection, performance interpretation, decision threshold behavior, review-policy design, training strategy, error analysis, and robustness claims.
 

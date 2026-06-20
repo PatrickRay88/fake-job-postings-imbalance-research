@@ -32,6 +32,22 @@ The strongest audit conclusion is:
 
 This means the model should be interpreted as a strong dataset classifier, not as proven real-world fraud detection.
 
+## Connection to Prior Future Work
+
+This audit is motivated by future-work directions in prior online recruitment fraud research.
+
+Vidros et al. introduced EMSCAD and called for richer future analysis using user behavior, company and network data, user-content-IP collision patterns, and graph modeling. This project cannot add unavailable user/network data, but it does audit repeated content, company credibility metadata, and split robustness.
+
+Vo et al. focused on the class imbalance problem and pointed toward improved imbalance handling and evolving data settings. This project extends that direction through threshold sensitivity, cost sensitivity, prevalence stress testing, review-budget analysis, training-distribution comparison, label scarcity, and job-id-order splitting.
+
+Mahbub, Pardede, and Kayes emphasized contextual features and localization. This project responds by testing whether company credibility metadata affects predictions and by showing that missing company information can create false positives.
+
+Adebayo et al. moved beyond binary classification toward fraudulent job types and noted the need for richer data. This project does not annotate fraud types, but it shows that binary EMSCAD performance should be interpreted cautiously.
+
+Alghamdi and Alharby emphasized attributes such as company profile, company logo, and required experience. This project directly tests the sensitivity of predictions to company profile, logo, and benefits information.
+
+Full related-work mapping: [related_work_and_research_gap.md](related_work_and_research_gap.md)
+
 ## 1. Duplicate Leakage Audit
 
 Table: [duplicate_signature_summary.csv](artifact_audit_outputs/tables/duplicate_signature_summary.csv)
